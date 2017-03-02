@@ -1,0 +1,36 @@
+### PhpStorm / WebStorm ###
+#
+.idea/
+
+### VS Code ###
+.vscode/
+
+# Dependency directories
+#
+node_modules
+
+### OSX ###
+#
+.DS_Store
+
+### Node ###
+#
+# Logs
+logs
+*.log
+npm-debug.log*
+# Dependency directories
+node_modules
+# Optional npm cache directory
+.npm
+# Optional REPL history
+.node_repl_history
+
+### SublimeText ###
+#
+# workspace files are user-specific
+*.sublime-workspace
+
+### Atom ###
+#
+.tern-project

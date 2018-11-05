@@ -489,7 +489,7 @@ export function renderToDom(vm, vnode) {
 }
 ```
 
-> 由于`<div :class="foo"></div>`这种形式的绑定值不带`{{ }}`符号的
+> 由于`<div :class="foo"></div>`这种形式的绑定值不带```{{ }}```符号的
 > 所以`Watcher`里面的取值需要做下兼容，改动最小可以直接修改`getTextValue`函数
 
 ```js

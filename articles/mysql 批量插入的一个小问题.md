@@ -102,7 +102,7 @@ for (let i=0; i < users.length; i++) {
 ## 发现问题
 
 1. 使用 `IGNORE` 语句插入插入时，当同一份文件多次插入之后，手动删除某一条记录，再重新上传这份 excel 表，自增 id 有明显断层
-  ![20180717154213.gif](http://p8rgie9qn.bkt.clouddn.com/img/20180717154213.gif)
+![20180717154213.gif](http://blog-deepen-static.oss-cn-shenzhen.aliyuncs.com/img/20180717154213.gif)
 
 <br>
 

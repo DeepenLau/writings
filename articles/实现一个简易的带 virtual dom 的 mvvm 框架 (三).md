@@ -15,7 +15,7 @@ desc: 结合前面两篇，组合成一个带 virtual dom 的 mvvm
 1. 编译模板的转成抽象语法树（ast）
 2. 把 ast 转成 vdom
 3. 新旧 vdom 进行 diff 得出 patches 补丁包
-4. 给真实 dom 打上 patches 补丁包，更新视图
+4. 给真实dom 打上 patches 补丁包，更新视图
 
 其中第一点编译模板的部分，在`Vue`源码里面的编译器其实是相当复杂的
 因为是纯字符串的编译，除了需要提起需要东西，还要保持与浏览器一样的行为
@@ -29,7 +29,7 @@ desc: 结合前面两篇，组合成一个带 virtual dom 的 mvvm
 import { parse } from './parser/index.js'
 
 export default class Compile {
-  constructor(el, vm) {
+  constructor (el, vm) {
     this.el = document.querySelector(el)
     this.vm = vm
 
@@ -45,13 +45,14 @@ export default class Compile {
     }
   }
 
-  node2Fragment(el) {
+  node2Fragment (el) {
     let cloneEl = el.cloneNode(true)
     let fragment = document.createDocumentFragment()
     fragment.appendChild(cloneEl)
     return fragment
   }
 }
+
 ```
 
 这里我们部分改造了这个编译器，暂时的目标是在词法分析的基础上做句法分析从而生成一棵 AST
@@ -64,7 +65,7 @@ import { parseHTML } from './html-parser.js'
 /**
  * 这个是要生成 AST 元素节点的函数，返回的是一个对象
  */
-export function createASTElement(tag, attrs, parent) {
+export function createASTElement (tag, attrs, parent) {
   return {
     type: 1,
     tag,
@@ -74,7 +75,7 @@ export function createASTElement(tag, attrs, parent) {
   }
 }
 
-export function parse(node) {
+export function parse (node) {
   // 存放父级的栈
   const stack = []
   // 最终的 AST
@@ -88,8 +89,7 @@ export function parse(node) {
       stack.length -= 1
       currentParent = stack[stack.length - 1]
     },
-    compileElement(tag, attrs) {
-      // 遇到元素节点的时候
+    compileElement(tag, attrs) { // 遇到元素节点的时候
       let element = createASTElement(tag.toLowerCase(), attrs, currentParent)
       if (!root) {
         root = element
@@ -104,8 +104,7 @@ export function parse(node) {
       stack.push(element)
     },
 
-    compileText(text) {
-      // 遇到文本节点的时候
+    compileText(text) { // 遇到文本节点的时候
       const children = currentParent.children
       children.push({
         type: 3,
@@ -125,8 +124,8 @@ function makeAttrsMap(attrs) {
   })
   return attrsMap
 }
-```
 
+```
 这里`parse`函数的基本结构，后面我们慢慢往这里面加代码
 
 主要就是通过调用`parseHTML`函数，一边解析标签一边返回所需要的信息来一步一步构建`AST`
@@ -134,7 +133,7 @@ function makeAttrsMap(attrs) {
 下面来看`parseHTML`函数
 
 ```js
-export function parseHTML(node, options) {
+export function parseHTML (node, options) {
   // 目前只简单处理元素节点和文本节点
   // https://developer.mozilla.org/zh-CN/docs/Web/API/Node/nodeType
   switch (node.nodeType) {
@@ -143,8 +142,7 @@ export function parseHTML(node, options) {
 
       let childNodes = Array.from(node.childNodes)
 
-      if (!childNodes.length) {
-        // 子节点列表数组为空直接回退上一级父节点
+      if (!childNodes.length) { // 子节点列表数组为空直接回退上一级父节点
         options.end()
       }
 
@@ -167,7 +165,7 @@ export function parseHTML(node, options) {
 
 在`Vue`里面编译模板用的纯字符串模板编译，过程是相当复杂的
 有兴趣了解的可以看这里，解释得很完整了，推荐精读
-[Vue 技术内幕 \| Vue 的编译器初探](http://hcysun.me/vue-design/art/80vue-compiler-start.html)
+[Vue技术内幕 \| Vue 的编译器初探](http://hcysun.me/vue-design/art/80vue-compiler-start.html)
 
 在这里我们用`dom`节点，简化流程操作
 
@@ -184,7 +182,7 @@ import { parse } from './parser/index.js'
 import { createVirtualDom } from './vdom/index.js'
 
 export default class Compile {
-  constructor(el, vm) {
+  constructor (el, vm) {
     this.el = document.querySelector(el)
     this.vm = vm
 
@@ -193,7 +191,7 @@ export default class Compile {
       let fragment = this.node2Fragment(this.el)
       // 2.开始编译
       let ast = parse(fragment.firstChild)
-
+      
       let vdom = createVirtualDom(vm, ast)
 
       // this.compile(fragment)
@@ -202,25 +200,25 @@ export default class Compile {
     }
   }
 
-  node2Fragment(el) {
+  node2Fragment (el) {
     let cloneEl = el.cloneNode(true)
     let fragment = document.createDocumentFragment()
     fragment.appendChild(cloneEl)
     return fragment
   }
 }
+
 ```
 
 上面的部分主要是加了这句 `let vdom = createVirtualDom(vm, ast)`
 
 下面来看看这个`createVirtualDom`函数
-
 ```js
 // vdom/index.js
 
 import { createElementVNode, createTextVNode } from './vnode.js'
 
-export function createVirtualDom(vm, ast) {
+export function createVirtualDom (vm, ast) {
   let root
   let vnode = createElementVNode(ast.tag, { ...ast.attrsMap }, [])
   if (!ast.parent) {
@@ -233,7 +231,7 @@ export function createVirtualDom(vm, ast) {
   return root
 }
 
-function createChildVNode(vm, astChildren, parentVnode) {
+function createChildVNode (vm, astChildren, parentVnode) {
   astChildren.forEach(astChild => {
     let vnode
     if (astChild.type === 1) {
@@ -251,7 +249,6 @@ function createChildVNode(vm, astChildren, parentVnode) {
   })
 }
 ```
-
 流程就是遍历`AST`，生成 `vdom`
 
 关于`VNode`和上一篇写的一样
@@ -293,7 +290,7 @@ export function createTextVNode(text) {
 }
 ```
 
-到这里我们就得到了“虚拟 dom”
+到这里我们就得到了“虚拟dom”
 
 ```
 VNode {type: 1, tag: "div", props: {…}, exp: undefined, text: undefined, …}
@@ -323,10 +320,11 @@ VNode {type: 1, tag: "div", props: {…}, exp: undefined, text: undefined, …}
 import { getTextValue, getValue } from '../util.js'
 import { bindRE } from '../constant.js'
 
-export function renderToDom(vm, vnode) {
+export function renderToDom (vm, vnode) {
   let el = document.createElement(vnode.tag)
 
   for (let key in vnode.props) {
+
     let bindKey = key.match(bindRE)
     if (bindKey) {
       // 匹配属性上有绑定的值，正则是匹配 : 或者 v-bind
@@ -360,11 +358,7 @@ export function renderToDom(vm, vnode) {
 export function setAttr(node, key, value, vnode) {
   switch (key) {
     case 'value':
-      if (
-        (node.tagName,
-        toUpperCase() === 'INPUT' || node.tagName,
-        toUpperCase() === 'TEXTAREA')
-      ) {
+      if (node.tagName,toUpperCase() === 'INPUT' || node.tagName,toUpperCase() === 'TEXTAREA') {
         node.value = value
       } else {
         node.setAttribute(key, value)
@@ -390,9 +384,9 @@ export const TEXT_REG = /\{\{([^}]+)\}\}/g // 匹配 {{}} 的内容
 export const bindRE = /^:|^v-bind:/
 ```
 
-到通过`renderToDom`函数得到的返回值已经取值并且转化成了真实 dom
+到通过`renderToDom`函数得到的返回值已经取值并且转化成了真实dom
 
-之后就是把这个真的 dom 替换掉原来页面上的模板节点
+之后就是把这个真的dom替换掉原来页面上的模板节点
 
 ```js
 // Complie.js
@@ -402,7 +396,7 @@ import { createVirtualDom } from './vdom/index.js'
 import { renderToDom } from './vdom/render.js'
 
 export default class Compile {
-  constructor(el, vm) {
+  constructor (el, vm) {
     this.el = document.querySelector(el)
     this.vm = vm
 
@@ -421,16 +415,17 @@ export default class Compile {
     }
   }
 
-  node2Fragment(el) {
+  node2Fragment (el) {
     let cloneEl = el.cloneNode(true)
     let fragment = document.createDocumentFragment()
     fragment.appendChild(cloneEl)
     return fragment
   }
 }
+
 ```
 
-到这里已经完成了 模板 --> AST --> 虚拟 dom --> 真实 dom --> 页面 的首次渲染过程了
+到这里已经完成了 模板 --> AST --> 虚拟dom --> 真实dom --> 页面 的首次渲染过程了
 
 ## 添加 Watcher
 
@@ -439,23 +434,23 @@ export default class Compile {
 先来分析一下这时候是在哪个时机添加`Watcher`实例呢？
 
 其实无非就两个地方：
-
 1. 设置有绑定的值的元素节点的时候
 2. 文本节点带有表达式的时候
 
 ```js
-export function renderToDom(vm, vnode) {
+export function renderToDom (vm, vnode) {
   let el = document.createElement(vnode.tag)
 
   for (let key in vnode.props) {
+
     let bindKey = key.match(bindRE)
     if (bindKey) {
       // 匹配属性上有绑定的值，正则是匹配 : 或者 v-bind
       let domKey = key.split(bindKey[0])[1]
       setAttr(el, domKey, getValue(vm, vnode.props[key]))
-
+      
       // 这里加 Watcher
-      new Watcher(vm, vnode.props[key], newValue => {
+      new Watcher(vm, vnode.props[key], (newValue) => {
         console.log(newValue)
       })
     } else {
@@ -473,9 +468,9 @@ export function renderToDom(vm, vnode) {
       const text = getTextValue(vm, childVnode.exp)
       child = document.createTextNode(text)
       childVnode.text = text
-
+      
       // 这里加 Watcher
-      new Watcher(vm, childVnode.exp, newValue => {
+      new Watcher(vm, childVnode.exp, (newValue) => {
         console.log(newValue)
       })
     } else {
@@ -512,33 +507,29 @@ export function getTextValue(vm, expr) {
 剩下最后一步，也就是处理 Watcher 的回调
 
 其实在这两个回调里面，其实可以直接按照第一篇讲的那样直接修改`dom`节点
-
 ```js
 // 元素节点
-new Watcher(vm, vnode.props[key], newValue => {
+new Watcher(vm, vnode.props[key], (newValue) => {
   setAttr(el, domKey, newValue)
 })
 // 文本节点
-new Watcher(vm, childVnode.exp, newValue => {
+new Watcher(vm, childVnode.exp, (newValue) => {
   child.textContent = newValue
 })
 ```
+但是这样做的话，我们就没有学习到“虚拟dom”的流程了
+“虚拟dom”的好处在这里也不用多说，一搜一大堆
+下面来走走“虚拟dom”的流程
 
-但是这样做的话，我们就没有学习到“虚拟 dom”的流程了
-“虚拟 dom”的好处在这里也不用多说，一搜一大堆
-下面来走走“虚拟 dom”的流程
-
-现在我们定义虚拟 dom 的更新策略是，当所有订阅者都被调用`update`函数之后，
+现在我们定义虚拟dom的更新策略是，当所有订阅者都被调用`update`函数之后，
 我们再通过新旧`vdom`的对比，得出补丁包，最后统一更新，也就是走我们第二篇写的流程
-而不是在如第一篇所写的那样在`update`函数的回调里面直接更新到 dom
+而不是在如第一篇所写的那样在`update`函数的回调里面直接更新到dom
 
 所以现在需要解决一些问题
-
 1. 在一个属性改变之后，需要一个标识来确定所有订阅已经调用`update`函数完毕
 2. 缓存新旧`vnode`以便做 diff
 
 第一个问题我们修改发布订阅类
-
 ```js
 // Observer.js
 
@@ -547,17 +538,17 @@ new Watcher(vm, childVnode.exp, newValue => {
  * 用来收集订阅者，数据变动触发notify，再调用订阅者的update方法
  */
 export class Dep {
-  constructor() {
+  constructor () {
     // 订阅者的数组
     this.subs = []
   }
 
-  addSub(watcher) {
+  addSub (watcher) {
     // 添加订阅者
     this.subs.push(watcher)
   }
 
-  notify() {
+  notify () {
     let isDone = false
     this.subs.forEach((watcher, index) => {
       if (index === this.subs.length - 1) {
@@ -601,13 +592,13 @@ let oldRootVnode
 let newRootVnode
 let rootEl
 
-export function renderToDom(vm, vnode) {
+export function renderToDom (vm, vnode) {
   if (!newRootVnode) {
     newRootVnode = vnode
   }
-
+  
   let el = document.createElement(vnode.tag)
-
+  
   if (!rootEl) {
     rootEl = el
   }
@@ -635,12 +626,11 @@ function doDiff(oldRootVnode, newRootVnode) {
   const patches = diff(oldRootVnode, newRootVnode)
   patch(rootEl, patches)
 }
-```
 
+```
 > 由于在本章前面我们把 `VNode`类加了一个 `attrs`属性用来存放取值之后的属性
 > 所以在`diff`函数中相应的地方也改一下，其实就一个地方
 > 其他不需要变动
-
 ```js
 // vdom/diff.js
 
@@ -664,7 +654,7 @@ import Compile from './Compile.js'
 import Observer from './Observer.js'
 
 export default class Mvvm {
-  constructor(options) {
+  constructor (options) {
     this.$el = options.el
     this.$data = options.data
 
@@ -720,6 +710,6 @@ export default class Mvvm {
 ## 总结
 
 1. 本章我们把前两篇的内容做个一个整合，实现了一个简易的带`vdom`的`mvvm`框架
-2. 写完本例发现应该还有性能更高的“虚拟 dom”和“真实 dom”的映射方式
+2. 写完本例发现应该还有性能更高的“虚拟dom”和“真实dom”的映射方式
 3. 其实在写本例个过程中也延伸了很多其他知识点，比如正则表达式连续调用`test`的`lastIndex`的问题、`Vue`编译器的全部过程等等
 4. 获益匪浅

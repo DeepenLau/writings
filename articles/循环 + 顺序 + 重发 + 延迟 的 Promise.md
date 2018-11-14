@@ -7,7 +7,7 @@ desc: 关于 promise 的骚操作
 
 # 循环 + 顺序 + 重发 + 延迟 的 Promise
 
-> 最近接到一个需求：希望能循环执行 promise ，成功了一个自动执行下一个 promise，失败了重新执行上一次，重试有两次机会，两次都失败，退出进程
+> 最近接到一个需求：希望能循环 执行 promise ，成功了一个自动执行下一个 promise，失败了重新执行上一次，重试有两次机会，两次都失败，退出进程
 
 说干就干
 
@@ -609,7 +609,7 @@ main().then(results => {
 // [ '成功p1', '成功p2', '成功p3', '成功p4' ]
 
 ```
-到这里，我们基本实现了 循环 + 顺序 + 重发 + 延迟 的 primose，在这当中，应该还回有让代码更简洁，更健壮的方法（比如使用 async/await 语法），有待时间去验证。
+到这里，我们基本实现了 循环 + 顺序 + 重发 + 延迟 的 primose，在这当中，应该还回有让代码更简洁，更健壮的方法（比如使用 async/await 语法），有待时间去验证。
 
 ## 参考文献
 [http://liubin.org/promises-book/#promise-sequence](http://liubin.org/promises-book/#promise-sequence)

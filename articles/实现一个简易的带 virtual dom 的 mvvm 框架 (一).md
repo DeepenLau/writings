@@ -9,22 +9,22 @@ desc: 先实现一个不带 virtual dom 的 mvvm
 
 > 废话少说，开干
 
-## 先实现一个不带 virtual dom 的 mvvm
+## 先实现一个不带 virtual dom 的 mvvm 
 
 参考在 github 上比较多 star 的仓库
 
-[GitHub - DMQ/mvvm: 剖析 vue 实现原理，自己动手实现 mvvm](https://github.com/DMQ/mvvm)
+[GitHub - DMQ/mvvm: 剖析vue实现原理，自己动手实现mvvm](https://github.com/DMQ/mvvm)
 
 参考这个仓库，去掉一些判断，尽量只保留最核心的代码
 
 ### 简单分析
 
-![20181011095233.png](http://p8rgie9qn.bkt.clouddn.com/img/20181011095233.png)
+![20181011095233.png](http://blog-deepen-static.oss-cn-shenzhen.aliyuncs.com/img/20181011095233.png)
 
 从这张图可以看出整个 `Mvvm` 其实就分为三个部分
 一个是 `Observer` 用来劫持数据
 一个是 `Compile` 用来编译模板
-一个是 `Watcher` 通过发布订阅模式来关联`Observer` 和 `Compile`
+一个是 `Watcher` 通过发布订阅模式来关联`Observer` 和 `Compile` 
 
 ## 从最简单的 html 开始
 
@@ -58,7 +58,7 @@ import Compile from './Compile.js'
 import Observer from './Observer.js'
 
 export default class Mvvm {
-  constructor(options) {
+  constructor (options) {
     this.$el = options.el
     this.$data = options.data
 
@@ -74,15 +74,15 @@ export default class Mvvm {
 
 ```js
 export default class Observer {
-  constructor(data) {
+  constructor (data) {
     this.observe(data)
   }
 
-  observe(data) {
+  observe (data) {
     if (!data || typeof data !== 'object') {
       return
     }
-
+    
     Object.keys(data).forEach(key => {
       // 通过遍历 data 的属性，使用 Object.defineProperty 劫持
       this.defineReactive(data, key, data[key])
@@ -91,14 +91,14 @@ export default class Observer {
     })
   }
 
-  defineReactive(data, key, value) {
+  defineReactive (data, key, value) {
     Object.defineProperty(data, key, {
       enmerable: true,
       configurable: true,
-      get() {
+      get () {
         return value
       },
-      set(newValue) {
+      set (newValue) {
         if (value === newValue) return
         value = newValue
       }
@@ -111,12 +111,13 @@ export default class Observer {
 
 ## 实现数据模板编译 `Compile.js`
 
+
 ```js
 import { TEXT_REG } from './constant.js'
 import { getTextValue } from './util.js'
 
 export default class Compile {
-  constructor(el, vm) {
+  constructor (el, vm) {
     this.el = document.querySelector(el)
     this.vm = vm
 
@@ -135,7 +136,7 @@ export default class Compile {
     return node.nodeType === 1
   }
 
-  compile(fragment) {
+  compile (fragment) {
     let childNodes = fragment.childNodes
     // Array.isArray(childNodes) => false，是类数组
 
@@ -151,11 +152,11 @@ export default class Compile {
     })
   }
 
-  compileElement(node) {
+  compileElement (node) {
     // 本例只做 {{ foo }} 的文本节点处理，保留编译流程的大致思路
   }
 
-  compileText(node) {
+  compileText (node) {
     let expr = node.textContent // 获取文本内容
 
     if (TEXT_REG.test(expr)) {
@@ -168,7 +169,7 @@ export default class Compile {
     }
   }
 
-  node2Fragment(el) {
+  node2Fragment (el) {
     let cloneEl = el.cloneNode(true)
     let fragment = document.createDocumentFragment()
     fragment.appendChild(cloneEl)
@@ -181,7 +182,7 @@ function callDirective(directive, node, vm, expr) {
 }
 
 const util = {
-  text(node, vm, expr) {
+  'text' (node, vm, expr) {
     node.textContent = getTextValue(vm, expr)
   }
 }
@@ -201,7 +202,6 @@ const util = {
 // constant.js (常量)
 export const TEXT_REG = /\{\{([^}]+)\}\}/g // 匹配 {{}} 的内容
 ```
-
 ```js
 // util.js
 import { TEXT_REG } from './constant.js'
@@ -237,7 +237,7 @@ import { getTextValue } from './util.js'
 // 新值和老值进行对比，发生变化就调用更新方法
 // 在模板编译的时候调用
 export default class Watcher {
-  constructor(vm, expr, cb) {
+  constructor (vm, expr, cb) {
     this.vm = vm
     this.expr = expr // 表达式 {{ foo }}
     this.cb = cb // 给外面用的回调函数
@@ -247,13 +247,13 @@ export default class Watcher {
   }
 
   // 获取 data 里面响应的值
-  get() {
+  get () {
     let value = getTextValue(this.vm, this.expr)
     return value
   }
 
   // update 方式是给 data 属性更新值的时候调用，也就是在 setter 里面
-  update() {
+  update () {
     // 值已经改变之后，还没有更新到 dom
     let newValue = getTextValue(this.vm, this.expr)
     let oldValue = this.value
@@ -284,6 +284,7 @@ const util = {
     node.textContent = getTextValue(vm, expr)
   }
 }
+
 ```
 
 到这里的问题是，在哪里调用每个 `watcher` 实例的 `update` 方法？
@@ -303,26 +304,26 @@ const util = {
 ```js
 // Observer.js
 export default class Observer {
-  constructor(data) {
+  constructor (data) {
     this.observe(data)
   }
 
-  observe(data) {
+  observe (data) {
     Object.keys(data).forEach(key => {
       this.defineReactive(data, key, data[key])
     })
   }
 
-  defineReactive(data, key, value) {
+  defineReactive (data, key, value) {
     // 每个属性都有一个发布订阅实例，有自己的订阅者(watcher实例)数组
     const dep = new Dep()
     Object.defineProperty(data, key, {
       enmerable: true,
       configurable: true,
-      get() {
+      get () {
         return value
       },
-      set(newValue) {
+      set (newValue) {
         if (value === newValue) return
         value = newValue
         // 通知所有订阅者更新
@@ -337,18 +338,18 @@ export default class Observer {
  * 用来收集订阅者，数据变动触发notify，再调用订阅者的update方法
  */
 export class Dep {
-  constructor() {
+  constructor () {
     // 订阅者的数组
     this.subs = []
   }
 
-  addSub(watcher) {
+  addSub (watcher) {
     // 添加订阅者
     this.subs.push(watcher)
   }
 
-  notify() {
-    this.subs.forEach(watcher => watcher.update())
+  notify () {
+    this.subs.forEach(watcher => watcher.update() )
   }
 }
 ```
@@ -399,7 +400,7 @@ import { Dep } from './Observer.js'
 // 新值和老值进行对比，发生变化就调用更新方法
 // 在模板编译的时候调用
 export default class Watcher {
-  constructor(vm, expr, cb) {
+  constructor (vm, expr, cb) {
     this.vm = vm
     this.expr = expr // 表达式 {{ foo }}
     this.cb = cb // 给外面用的回调函数
@@ -408,7 +409,7 @@ export default class Watcher {
     this.value = this.get()
   }
 
-  get() {
+  get () {
     // 这里绑定当前的实例
     Dep.target = this
     let value = getTextValue(this.vm, this.expr)
@@ -417,7 +418,7 @@ export default class Watcher {
     return value
   }
 
-  update() {
+  update () {
     let newValue = getTextValue(this.vm, this.expr)
     let oldValue = this.value
     if (newValue != oldValue) {
@@ -433,27 +434,27 @@ export default class Watcher {
 // Observer.js
 
 export default class Observer {
-  constructor(data) {
+  constructor (data) {
     this.observe(data)
   }
 
-  observe(data) {
+  observe (data) {
     Object.keys(data).forEach(key => {
       this.defineReactive(data, key, data[key])
     })
   }
 
-  defineReactive(data, key, value) {
+  defineReactive (data, key, value) {
     const dep = new Dep()
     Object.defineProperty(data, key, {
       enmerable: true,
       configurable: true,
-      get() {
+      get () {
         // Dep.target 不为 null 才添加到订阅数组
         Dep.target && dep.addSub(Dep.target)
         return value
       },
-      set(newValue) {
+      set (newValue) {
         if (value === newValue) return
         value = newValue
         dep.notify()
@@ -463,18 +464,18 @@ export default class Observer {
 }
 
 export class Dep {
-  constructor() {
+  constructor () {
     // 订阅者的数组
     this.subs = []
   }
 
-  addSub(watcher) {
+  addSub (watcher) {
     // 添加订阅者
     this.subs.push(watcher)
   }
 
-  notify() {
-    this.subs.forEach(watcher => watcher.update())
+  notify () {
+    this.subs.forEach(watcher => watcher.update() )
   }
 }
 ```
@@ -499,13 +500,12 @@ setTimeout(() => {
   vm.$data.foo = 'new bar'
 }, 2000)
 ```
-
 效果如下
 
-![20181011144739.gif](http://p8rgie9qn.bkt.clouddn.com/img/20181011144739.gif)
+![20181011144739.gif](http://blog-deepen-static.oss-cn-shenzhen.aliyuncs.com/img/20181011144739.gif)
 
 # 补充
 
-本例为了然后核心流程更加清晰直观而去除了一些判断，和一些必须要做操作，比如属性的类型判断，data 属性代理到 vm 实例上等等
+本例为了然后核心流程更加清晰直观而去除了一些判断，和一些必须要做操作，比如属性的类型判断，data属性代理到 vm 实例上等等
 这些东西可以后续逐步完善的时候加上
 比如实现 v-model 指令的双向绑定，事件的鉴定等等

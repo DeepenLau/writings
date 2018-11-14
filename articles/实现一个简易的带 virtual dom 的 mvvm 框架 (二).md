@@ -27,12 +27,12 @@ render () {
   return createElement(
     // {String | Object | Function}
     'div',
-
+    
     // {Object}
     // 一个包含模板相关属性的数据对象
     // 你可以在 template 中使用这些特性。可选参数。
     { class: 'div' },
-
+    
     // {String | Array}
     // 子虚拟节点 (VNodes)，由 `createElement()` 构建而成，
     // 也可以使用字符串来生成“文本虚拟节点”。可选参数。
@@ -43,7 +43,7 @@ render () {
   )
 }
 ```
-
+ 
 最终返回的是一个 “虚拟节点 (Virtual Node)” 也常简写它为“VNode”。“虚拟 DOM”是我们对由 Vue 组件树建立起来的整个 VNode 树的称呼。
 
 下面我们来简化一下，以完成我们这个简单的目标
@@ -59,7 +59,6 @@ let virtualDom1 = createElementVNode('ul', { class: 'list' }, [
   createElementVNode('li', { class: 'item' }, [createTextVNode('c')])
 ])
 ```
-
 `createElementVNode`用来创建元素类型的虚拟节点
 `createTextVNode`用来创建文本类型的元素节点
 
@@ -85,32 +84,28 @@ export function createTextVNode(text) {
   return new VNode(3, undefined, undefined, undefined, text, undefined)
 }
 ```
-
 可以看到`VNode`其实就是一个对象
 元素节默认 `type` 为 1，文本节点默认 `type` 为 3，并且各自节点不需要的属性默认设置为 `undefined`
 其中 文本节点 的 `exp` 属性是用来放表达式的，例如{{foo}}，目前不涉及，所以默认`undefined`
 参考资料：[Node.nodeType - Web API 接口 \| MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Node/nodeType)
 
-> 顺便提一下，其实在 Vue 编译的过程中，会有**包含有表达式**的文本节点(自定义的 type 为 2)和**纯文本**节点(自定义的 type 为 3)的区分
+> 顺便提一下，其实在 Vue 编译的过程中，会有**包含有表达式**的文本节点(自定义的 type 为2)和**纯文本**节点(自定义的 type 为3)的区分
 > 但是在这里我们把文本节点简化为统一的 3
 
 到这里我们就完成一个“vdom tree”
 
-## 把“虚拟 dom”渲染成“真实 dom”
+## 把“虚拟 dom”渲染成“真实dom”
 
 ```js
 // vnode.js 加一下下面代码
 
-export function renderToDom(vnode) {
+export function renderToDom (vnode) {
   let el = document.createElement(vnode.tag)
   for (let key in vnode.props) {
     setAttr(el, key, vnode.props[key])
   }
   vnode.children.forEach(child => {
-    child =
-      child.type === 1
-        ? renderToDom(child)
-        : document.createTextNode(child.text)
+    child = (child.type === 1) ? renderToDom(child) : document.createTextNode(child.text)
     el.appendChild(child)
   })
   return el
@@ -120,11 +115,7 @@ function setAttr(node, key, value) {
   switch (key) {
     // 文本框做一下处理
     case 'value':
-      if (
-        (node.tagName,
-        toUpperCase() === 'INPUT' || node.tagName,
-        toUpperCase() === 'TEXTAREA')
-      ) {
+      if (node.tagName,toUpperCase() === 'INPUT' || node.tagName,toUpperCase() === 'TEXTAREA') {
         node.value = value
       } else {
         node.setAttribute(key, value)
@@ -156,7 +147,7 @@ document.getElementById('root').appendChild(dom)
 <script type="module" src="./index.js"></script>
 ```
 
-到这里，就完成把一个 vdom 渲染成了一个真实 dom
+到这里，就完成把一个 vdom 渲染成了一个真实dom
 
 ## 两个 vdom 进行 diff
 
@@ -166,7 +157,7 @@ document.getElementById('root').appendChild(dom)
 
 1. 数据修改后产生一个新的 vdom tree
 2. 和旧 vdom 的进行 diff，也就是对比找出不同点，然后生成补丁包(patches)
-3. 最后把补丁包打在真实 dom 上，完成更新视图
+3. 最后把补丁包打在真实dom上，完成更新视图
 
 ```js
 // index.js
@@ -180,6 +171,7 @@ let virtualDom1 = createElementVNode('ul', { class: 'list' }, [
   createElementVNode('li', { class: 'item' }, [createTextVNode('b')]),
   createElementVNode('li', { class: 'item' }, [createTextVNode('c')])
 ])
+
 
 let dom = renderToDom(virtualDom1)
 
@@ -212,7 +204,7 @@ setTimeout(() => {
 
 这么说可能不够直观，那就上图说明
 
-![20181030152311.png](http://p8rgie9qn.bkt.clouddn.com/img/20181030152311.png)
+![20181030152311.png](http://blog-deepen-static.oss-cn-shenzhen.aliyuncs.com/img/20181030152311.png)
 
 图上红色就是遍历的顺序，也就是每个节点的位置，也是就 patches 的 key
 
@@ -222,13 +214,13 @@ setTimeout(() => {
 // diff.js
 
 // 补丁包的几个类型
-const ATTRS = 'ATTRS' // 属性改了
-const TEXT = 'TEXT' // 文本改了
-const REMOVE = 'REMOVE' // 节点删除了
+const ATTRS = 'ATTRS'     // 属性改了
+const TEXT = 'TEXT'       // 文本改了
+const REMOVE = 'REMOVE'   // 节点删除了
 const REPLACE = 'REPLACE' // 节点替换了
 let Index = 0 // 全局的 index，避免子节点递归遍历的顺序混乱
 
-export default function diff(oldVnode, newVnode) {
+export default function diff (oldVnode, newVnode) {
   Index = 0 // 每次diff都复位这个全局的 Index
   let patches = {}
   let index = 0
@@ -236,6 +228,7 @@ export default function diff(oldVnode, newVnode) {
   walk(oldVnode, newVnode, index, patches)
   return patches
 }
+
 
 function walk(oldNode, newNode, index, patches) {
   let currentPatch = []
@@ -248,8 +241,7 @@ function walk(oldNode, newNode, index, patches) {
       // 不一样
       currentPatch.push({ type: TEXT, text: newNode.text })
     }
-  } else if (oldNode.type === newNode.type) {
-    // 节点类型相同
+  } else if (oldNode.type === newNode.type) { // 节点类型相同
     // 比较属性是否有更改
     let attrs = diffAttr(oldNode.props, newNode.props)
     // 有更改再往 currentPatch 里面放
@@ -262,8 +254,7 @@ function walk(oldNode, newNode, index, patches) {
     // 说明节点被替换
     currentPatch.push({ type: REPLACE, newNode })
   }
-  if (currentPatch.length > 0) {
-    // 有补丁再放
+  if (currentPatch.length > 0) { // 有补丁再放
     // 放入大补丁包
     patches[index] = currentPatch
   }
@@ -297,6 +288,7 @@ function diffChildren(oldChildren, newChildren, patches) {
     walk(child, newChildren[idx], ++Index, patches)
   })
 }
+
 ```
 
 基本注释在代码上了
@@ -309,7 +301,7 @@ function diffChildren(oldChildren, newChildren, patches) {
   2: [{…}]
 ```
 
-也就对应了上面的图的数字，第 0 个和第 2 个节点发生了改变
+也就对应了上面的图的数字，第0个和第2个节点发生了改变
 
 我们会发现每个 key 后面的值都是一个数组，这是因为一个节点可能会同时存在修改多种类型的，这个取决于补丁包的自定义类型
 
@@ -318,16 +310,15 @@ function diffChildren(oldChildren, newChildren, patches) {
   0:
     attrs: {class: "new-list"}
     type: "ATTRS"
-
+    
 2: Array(1)
   0:
     text: "new a"
     type: "TEXT"
 ```
-
 这是最终补丁包的内容
 
-## 给真实 dom 打补丁，更新视图
+## 给真实dom打补丁，更新视图
 
 到这里我们来到了最后一步，就是把补丁包应用到视图上
 
@@ -381,7 +372,7 @@ function doPatch(node, patches) {
             node.removeAttribute(key)
           }
         }
-        break
+        break;
       case 'TEXT':
         node.textContent = patch.text
         break
@@ -391,23 +382,21 @@ function doPatch(node, patches) {
       case 'REPLACE':
         // patch.newNode 可能是虚拟 dom，如果是，则用 render 转成真实 dom，否则就是文本节点，最后替换到真实 dom
         let vnode = patch.newNode
-        let newNode =
-          vnode.type === 1
-            ? renderToDom(vnode)
-            : document.createTextNode(vnode.text)
+        let newNode = (vnode.type === 1) ? renderToDom(vnode) : document.createTextNode(vnode.text)
         node.parentNode.replaceChild(newNode, node)
         break
 
       default:
-        break
+        break;
     }
   })
 }
+
 ```
 
 ### 大功告成！！
 
-![20181030163642.gif](http://p8rgie9qn.bkt.clouddn.com/img/20181030163642.gif)
+![20181030163642.gif](http://blog-deepen-static.oss-cn-shenzhen.aliyuncs.com/img/20181030163642.gif)
 
 ## 总结
 

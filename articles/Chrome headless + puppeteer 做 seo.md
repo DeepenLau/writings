@@ -84,7 +84,7 @@ app.listen(3000);
 
 > Puppeteer 是由 Chrome 团队开发的一个 Node 库。它提供了一个高级 API 来控制无头 (或完整) 的 Chrome。它类似于其他自动测试库, 如 Phantom 和 NightmareJS, 但它只适用于最新版本的 Chrome。
 
-由于在安装的这个库的时候，它自动根据系统帮你去下载最新版，或者说符合当前这个 Puppeteer 版本的 Chrome 浏览器
+由于在安装的这个库的时候，它自动根据系统帮你去下载最新版，或者说符合当前这个 Puppeteer 版本的 Chrome 浏览器
 
 我选择自己开代理下载这个浏览器
 

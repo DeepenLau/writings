@@ -1,11 +1,11 @@
 ---
-title: 手写一个 ES6 Promise
+title: 手写一个 ES6 Promise（一）
 date: 2018-11-13 15:31:07
 tag: promise es6
 desc: 实现一个符合 Promoses/A+ 规范的 ES6 Promise
 ---
 
-# 手写一个 ES6 Promise
+# 手写一个 ES6 Promise（一）
 
 上来先来一篇规范 [Promises/A+](https://promisesaplus.com)
 中文版：[【翻译】Promises/A+规范-图灵社区](http://www.ituring.com.cn/article/66566)
@@ -712,15 +712,15 @@ a()
 
 ```js
 then(onFulfilled, onRejected) {
-  
+
   // 判断 onFulfilled, onRejected 是否为函数，不是就重写为默认函数
   // onFulfilled 直接返回 value
   onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value
   // onRejected 直接抛出错误
   onRejected = typeof onRejected === 'function' ? onRejected : reason  => { throw reason }
-  
+
   let promise2 = ...
-  
+
   return promise2
 }
 ```
@@ -900,7 +900,7 @@ function resolvePromise (promise, x, resolve) {
   if (promise === x) {
     resolve('xxx')
   }
-  
+
   // 2.3.2 x 为 Promise
   if (x instanceof MyPromise) {}
 
@@ -949,7 +949,7 @@ if (x instanceof MyPromise) {
   if (x.status === 'rejected') {
     reject(x.reason)
   }
-  
+
   return
 }
 ```
@@ -957,7 +957,7 @@ if (x instanceof MyPromise) {
 下面看 2.3.3 x 为对象或者函数，这里也是最复杂的部分，顺便结合 2.3.4
 
 > 2.3.3 x 为对象或者函数
-> 
+>
 > 2.3.3.1 把 x.then 赋值给 then
 > 2.3.3.2 如果取 x.then 的值时抛出错误 e ，则以 e 为据因拒绝 promise
 > 2.3.3.3 如果 then 是函数，将 x 作为函数的作用域 this 调用之。传递两个回调函数作为参数，第一个参数叫做 resolvePromise ，第二个参数叫做 rejectPromise:
@@ -968,7 +968,7 @@ if (x instanceof MyPromise) {
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.3.3.3.4.1 如果 resolvePromise 或 rejectPromise 已经被调用，则忽略之
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.3.3.3.4.1 否则以 e 为据因拒绝 promise
 > 2.3.3.4 如果 then 不是函数，以 x 为参数执行 promise
-> 
+>
 > 2.3.4 x 不为对象或者函数
 
 代码大致如下
@@ -1152,7 +1152,7 @@ class MyPromise {
   finally(onFinally) {
     // ...
   }
-  
+
   static resolve(value) {
     return new MyPromise(resolve => resolve(value))
   }
@@ -1280,7 +1280,7 @@ class MyPromise {
 
     return promise2
   }
-  
+
   // ...
   // ...
   // ...
@@ -1315,7 +1315,7 @@ class MyPromise {
   catch(onRejected) {
     return this.then(null, onRejected)
   }
-  
+
   finally(onFinally) {
     // ...
   }
@@ -1323,7 +1323,7 @@ class MyPromise {
   static resolve(value) {
     return new MyPromise(resolve => resolve(value))
   }
-  
+
   static reject(reason) {
     return new MyPromise((resolve, reject) => reject(reason))
   }
@@ -1353,7 +1353,7 @@ class MyPromise {
   catch(onRejected) {
     return this.then(null, onRejected)
   }
-  
+
   finally(onFinally) {
     // ...
   }
@@ -1361,11 +1361,11 @@ class MyPromise {
   static resolve(value) {
     return new MyPromise(resolve => resolve(value))
   }
-  
+
   static reject(reason) {
     return new MyPromise((resolve, reject) => reject(reason))
   }
-  
+
   static all (promises = []) {
     return new MyPromise((resolve, reject) => {
       if (!Array.isArray(promises)) {
@@ -1437,7 +1437,7 @@ class MyPromise {
   catch(onRejected) {
     return this.then(null, onRejected)
   }
-  
+
   finally(onFinally) {
     // ...
   }
@@ -1445,15 +1445,15 @@ class MyPromise {
   static resolve(value) {
     return new MyPromise(resolve => resolve(value))
   }
-  
+
   static reject(reason) {
     return new MyPromise((resolve, reject) => reject(reason))
   }
-  
+
   static all (promises = []) {
     // ...
   }
-  
+
   static race (promises = []) {
     return new MyPromise((resolve, reject) => {
       if (!Array.isArray(promises)) {

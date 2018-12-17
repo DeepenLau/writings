@@ -1,0 +1,1 @@
+module.exports = 'b.js 的内容'

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+      html,body {
+          margin:0;
+          overflow:hidden;
+          width:100%;
+          height:100%;
+          cursor:none;
+          background:black;
+      }
+  </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <script>
+      var ctx = document.getElementById('canvas'),
+        content = ctx.getContext('2d'),
+        WIDTH,
+        HEIGHT,
+        round = [],
+        initRoundPopulation = 100;
+
+      WIDTH = document.documentElement.clientWidth;
+      HEIGHT = document.documentElement.clientHeight;
+
+      ctx.width = WIDTH;
+      ctx.height = HEIGHT;
+
+      var useCache = true
+
+      function Round_item(index, x, y) {
+        this.index = index
+        this.x = x
+        this.y = y
+        this.r = Math.random() * 2 + 1
+        var alpha = (Math.floor(Math.random() * 10) + 1) / 10 / 2
+        this.color = "rgba(255,255,255," + alpha + ")"
+
+        this.useCache = useCache
+        this.cacheCanvas = document.createElement('canvas')
+        this.cacheCtx = this.cacheCanvas.getContext('2d')
+        // 为什么这里的 cacheCanvas 画布的宽度要设置为 6 倍的半径？那是因为，我们创建的 cacheCanvas 不仅仅是有圆，还包括圆的阴影，所以我们要将 cacheCanvas 的面积设置得稍微大一些，这样才能将圆带阴影一起剪切到我们的主 Canvas 中。
+        this.cacheCtx.width = 6 * this.r
+        this.cacheCtx.height = 6 * this.r
+
+        if (useCache) {
+          this.cache()
+        }
+      }
+
+      Round_item.prototype.draw = function() {
+        if (!useCache) {
+          content.fillStyle = this.color
+          content.shadowBlur = this.r * 2
+          content.beginPath()
+          content.arc(this.x, this.y, this.r, 0, 2*Math.PI, false)
+          content.closePath()
+          content.fill()
+        } else {
+          content.drawImage(this.cacheCanvas, this.x - this.r, this.y - this.r)
+        }
+      }
+
+      Round_item.prototype.cache = function() {
+        this.cacheCtx.save()
+        this.cacheCtx.fillStyle = this.color
+        this.cacheCtx.shadowColor = 'white'
+        this.cacheCtx.shadowBlur = this.r * 2
+        this.cacheCtx.beginPath()
+        this.cacheCtx.arc(this.r * 3, this.r * 3, this.r, 0, 2 * Math.PI)
+        this.cacheCtx.closePath()
+        this.cacheCtx.fill()
+        this.cacheCtx.restore()
+      }
+
+      Round_item.prototype.move = function() {
+        this.y -= 1.15
+        if (this.y <= -10) {
+          this.y = HEIGHT + 10
+        }
+        this.draw()
+      }
+
+      function init () {
+        for (var i = 0; i < initRoundPopulation; i++) {
+          round[i] = new Round_item(i, Math.random() * WIDTH,Math.random() * HEIGHT)
+          round[i].draw()
+
+        }
+        animate()
+      }
+
+      init()
+
+      function animate() {
+        content.clearRect(0, 0, WIDTH, HEIGHT)
+        // 提示：for...in不应该用于迭代一个 Array，其中索引顺序很重要
+        for (var i in round) {
+            round[i].move()
+        }
+        requestAnimationFrame(animate)
+      }
+
+    </script>
+</body>
+</html>

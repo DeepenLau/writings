@@ -182,7 +182,7 @@ eval("console.log('index 的内容')\n\n//# sourceURL=webpack:///./src/index.js?
 5. 要解除软链就直接执行 `npm unlink` 就可以了
 
 接下来我们在 `bin/mypack.js` 里面写点东西
-```shell
+```sh
 #! /usr/bin/env node
 console.log('命令行创建成功')
 ```
@@ -196,7 +196,8 @@ console.log('命令行创建成功')
 
 要实现零配置，那我们就先预先定于入口和出口，还有就是拿上面的输出代码作为模板，
 同时读取入口文件的内容，很快我们可以写出下面的代码
-```shell bin/mypack.js
+```sh
+# bin/mypack.js
 #! /usr/bin/env node
 let fs = require('fs')
 
@@ -319,7 +320,7 @@ return __webpack_require__(__webpack_require__.s = "./src/index.js");
 也就是说，在入口文件里面遇到 `require` 函数就会提取该模块，再把该模块加到自执行函数的模块参数里面
 
 那我们的代码就可以改成这样
-```shell
+```sh
 #! /usr/bin/env node
 let fs = require('fs')
 let path = require('path')
@@ -505,7 +506,7 @@ function parseModules(script) {
 下面在来把 `ES6` 的代码转移为 `ES5` 的代码
 这里我们用 `Babel` 来做这个事情
 先安装依赖，一个预设，一个核心库
-```shell
+```sh
 npm install --save-dev @babel/preset-env @babel/core
 ```
 写我们的 `babelLoader`
@@ -592,8 +593,9 @@ function parseModules(script) {
 
 到这里我们就实现了一个简易的 webpack
 
-完整的 `shell` 代码
-```shell
+完整代码
+
+```sh
 #! /usr/bin/env node
 let fs = require('fs')
 let path = require('path')

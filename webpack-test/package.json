@@ -4,12 +4,12 @@
   "description": "",
   "main": "b.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode development"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {},
   "devDependencies": {
     "webpack": "^4.27.1",
     "webpack-cli": "^3.1.2"

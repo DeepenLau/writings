@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+</head>
+<body>
+  <input type="text" id="input">
+  <button id="button">点击</button>
+  <!-- <script src="https://cdn.bootcss.com/lodash.js/4.17.11/lodash.min.js"></script> -->
+  <script src="https://cdn.bootcss.com/underscore.js/1.9.1/underscore.js"></script>
+  <script>
+    var input = document.getElementById('input')
+    var button = document.getElementById('button')
+
+    input.addEventListener('input', debounce((e) => {
+      console.log(e.target.value)
+    }, 1000))
+
+    button.addEventListener('click', debounce((e) => {
+      console.log(1)
+    }, 2000, true))
+
+    // immediate 是否立即触发一次
+    function debounce(fn, wait, immediate) {
+      let timer
+      return function () {
+        clearTimeout(timer)
+        if (immediate) {
+          let callNow = !timer // 第一次 timer 为 undefined
+          if (callNow) fn.apply(this, arguments)
+        }
+        timer = setTimeout(() => {
+          fn.apply(this, arguments)
+          timer = null
+        }, wait)
+      }
+    }
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .div1 {
+      width: 800px;
+      height: 800px;
+      position: fixed;
+      background: lightcorall;
+      left: 200px;
+      top: 200px;
+      padding-left: 100px;
+    }
+
+    .div2 {
+      width: 600px;
+      height: 600px;
+      background: lightblue;
+      padding-left: 100px;
+      padding-top: 100px;
+    }
+
+    .div3 {
+      width: 400px;
+      height: 400px;
+      background: lightsalmon;
+    }
+  </style>
+</head>
+<body>
+  <div class="div1">
+    <div class="div2">
+      <div class="div3"></div>
+    </div>
+  </div>
+
+  <script>
+    function get_layout(ele) {
+      const layout = {
+        width: ele.offsetWidth,
+        height: ele.offsetHeight,
+        left: ele.offsetLeft,
+        top: ele.offsetTop
+      }
+      if (ele.offsetParent) {
+        const parentLayout = get_layout(ele.offsetParent)
+        layout.left += parentLayout.left
+        layout.top += parentLayout.top
+      }
+      return layout
+    }
+
+    const a = get_layout(document.getElementsByClassName('div3')[0])
+    console.log(a)
+  </script>
+</body>
+</html>

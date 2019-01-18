@@ -1,0 +1,17 @@
+{
+  "name": "vue-tree",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ui": "vue ui"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vue/cli": "^3.2.1",
+    "@vue/cli-service-global": "^3.2.1"
+  }
+}

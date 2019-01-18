@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+  <style>
+    #header {
+      height: 100px;
+      background: lightblue
+    }
+    #footer {
+      height: 100px;
+      background: lightcoral;
+      clear: both;
+    }
+
+    #container .column{
+      float: left;
+      position: relative;
+      /* 高度自适应 */
+      padding-bottom: 100000px;
+      margin-bottom: -100000px;
+    }
+
+    #container {
+      padding: 0 250px 0 200px;
+      /* 高度自适应 */
+      overflow: hidden;
+    }
+
+    #center {
+      width: 100%;
+      background: lightsalmon
+    }
+
+    #left {
+      width: 200px;
+      background: lightgreen;
+      margin-left: -100%;
+      left: -200px;
+    }
+
+    #right {
+      width: 250px;
+      background: lightpink;
+      margin-left: -250px;
+      right: -250px;
+    }
+  </style>
+</head>
+<body>
+    <!-- 两边带有固定宽度中间可以流动（fluid）；
+
+    允许中间一栏最先出现；
+
+    允许任意一栏放在最上面；
+
+    仅需一个额外的 div 标签
+
+    仅需非常简单的 CSS，带上最少的兼容性补丁 -->
+
+  <div id="header">#header</div>
+
+  <div id="container">
+    <div id="center" class="column">
+        asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>
+    </div>
+    <div id="left" class="column">
+      left<br>
+      asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>
+        asdfadsfasd<br>
+    </div>
+    <div id="right" class="column">right</div>
+  </div>
+
+  <div id="footer">#footer</div>
+
+
+</body>
+</html>

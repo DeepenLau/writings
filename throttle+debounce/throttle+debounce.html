@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <button id="button">点击</button>
+  <script>
+    let button = document.getElementById('button')
+
+    button.addEventListener('click', throttle((e) => {
+      console.log(e)
+    }, 2000))
+
+    // debounce 上来先开一个定时器，只要一直点击，到时间什么都不做，就再开一个定时器
+    function debounce(fn, wait, options = {}) {
+      let maxWait
+      if ('maxWait' in options) {
+        maxWait = options.maxWait
+      }
+
+      let leading = true // 第一次触发
+      let trailing = true // 最后一次触发
+
+      let lastCallTime // 最后调用的时间
+      let timeout
+      let lastInvokeTime
+
+      let lastThis // 返回函数的 this
+      let lastArgs // 返回函数的参数
+
+      let shouldInvoke = function (now) {
+        let sinceLastTime = now - lastCallTime
+        let sinceLastInvokeTime = now - lastInvokeTime
+        // 第一次的时候 lastCallTime 为 undefined
+        return lastCallTime === undefined || sinceLastTime > wait || sinceLastInvokeTime >= maxWait
+      }
+
+      let invokeFunc = function (time) {
+        lastInvokeTime = time
+        fn.apply(lastThis, lastArgs)
+      }
+
+      let startTimer = function(timerExpired, wait) {
+        timeout = setTimeout(timerExpired, wait)
+      }
+
+      let remainingWait = function(now) {
+        return wait - (now - lastCallTime)
+      }
+
+      let timerExpired = function() {
+        let now = Date.now() // 当前定时器到时间了，看看是否需要执行这个函数
+        if (shouldInvoke(now)) { // 如果需要调用
+          // 触发结束的方法
+          return trailingEdge(now)
+        }
+
+        startTimer(timerExpired, remainingWait(now))
+      }
+
+      // leadingEdge 是否触发第一次执行
+      let leadingEdge = function(time) {
+        lastInvokeTime = time
+        if (leading) { // 需要执行就调用函数
+          invokeFunc(time)
+        }
+
+        // 开启一个定时器 看下一次定时器到了，是否需要调用
+        startTimer(timerExpired, wait)
+      }
+
+      let trailingEdge = function(time) {
+        timeout = undefined
+        if (trailing) {
+          invokeFunc(time)
+        }
+      }
+
+      let debounced = function(...args) {
+        lastArgs = this
+        lastArgs = args
+
+        let now = Date.now()
+        let isInvoking = shouldInvoke(now)
+        lastCallTime = now
+        if (isInvoking) {
+          if (timeout === undefined) {
+            leadingEdge(now)
+          }
+        }
+      }
+
+      return debounced
+    }
+
+    function throttle(fn, wait, options = {}) {
+      return debounce(fn, wait, {
+        maxWait: wait
+      })
+    }
+  </script>
+</body>
+</html>

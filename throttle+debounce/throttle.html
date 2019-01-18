@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+</head>
+<body>
+  <input type="text" id="input">
+  <button id="button">点击</button>
+  <script src="https://cdn.bootcss.com/lodash.js/4.17.11/lodash.min.js"></script>
+  <script>
+    var input = document.getElementById('input')
+    var button = document.getElementById('button')
+
+    input.addEventListener('input', throttle((e) => {
+      console.log(e.target.value)
+    }, 1000))
+
+    button.addEventListener('click', throttle((e) => {
+      console.log(1)
+    }, 2000, { leading: false }))
+
+    // 第一版
+    /* function throttle (fn, wait = 1000) {
+      let timer
+
+      return function(e) {
+        if (timer) return
+        timer = setTimeout(() => {
+          clearTimeout(timer)
+          timer = null
+          fn.apply(null, arguments)
+        }, wait)
+      }
+    } */
+
+    // 第二版
+    /* function throttle (fn, wait, options) {
+      let previous = 0
+      return function () {
+        let now = Date.now()
+        if (now - previous > wait) {
+          fn.apply(this, arguments)
+          previous = now
+        }
+      }
+    } */
+
+    // wait - (now - previous) < 0
+
+    // 第三版
+    function throttle (fn, wait, options) {
+      // options.trailing 最后一次触发，默认触发
+      // options.leading 第一次触发，默认触发
+      let args, context, previous = 0
+      let timer
+
+      let later = function() {
+        previous = options.leading === false ? 0 : Date.now()
+        fn.apply(context, args)
+      }
+
+      let throttled = function() {
+        args = arguments
+        context = this
+        let now = Date.now()
+        if (!previous && options.leading === false) previous = now
+        // remaining： 距离 wait 这个数的剩余时间
+        let remaining = wait - (now - previous)
+        if (remaining <= 0) { // 第一次
+          if (timer) { // 连续点击，清空定时器，保留最后一次点击的定时器
+            clearTimeout(timer)
+            timer = null
+          }
+          previous = now
+          fn.apply(context, args)
+        } else if (!timer && options.trailing !== false ) {
+          timer = setTimeout(later, remaining)
+        }
+      }
+
+      return throttled
+    }
+
+  </script>
+</body>
+</html>

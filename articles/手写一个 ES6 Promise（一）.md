@@ -44,7 +44,7 @@ a().then(res => {
 
 一个 promise 必须提供一个 then 方法以访问其当前值、终值（value）和据因（reason）。
 
-```
+```js
 promise.then(onFulfilled, onRejected)
 ```
 结合例子看到这里，其实就已经可以实现上面的例子代码的`Promise`实现了

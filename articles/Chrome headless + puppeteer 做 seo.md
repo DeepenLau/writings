@@ -56,7 +56,7 @@ server {
 这里用 nodejs 搭建
 
 ```bash
-yarn add koa
+$ yarn add koa
 ```
 
 ```js

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <video controls id="videoElement"></video>
+  <!-- <script src="https://cdn.bootcss.com/flv.js/1.5.0/flv.min.js"></script>
+  <script>
+    if (flvjs.isSupported()) {
+        var videoElement = document.getElementById('videoElement');
+        var flvPlayer = flvjs.createPlayer({
+            type: 'flv',
+            url: './M4H03565.flv'
+        });
+        flvPlayer.attachMediaElement(videoElement);
+        flvPlayer.load();
+        flvPlayer.play();
+    }
+</script> -->
+
+<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="640" height="480" id="VideoPlayer" align="middle">
+  <param name="allowScriptAccess" value="*" />
+  <param name="allowFullScreen" value="true" />
+  <param name="movie" value="http://www.platipus.nl/flvplayer/download/1.0/FLVPlayer.swf?video=./M4H03565.flv&autoplay=true" />
+  <param name"quality" value="high" />
+  <param name="bgcolor" value="#ffffff" />
+  <embed src="http://www.platipus.nl/flvplayer/download/1.0/FLVPlayer.swf?video=./M4H03565.flv&autoplay=true" quality="high" bgcolor="#000000" width="640" height="480" name="VideoPlayer" align="middle" allowScriptAccess="*" allowFullScreen="true" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
+  </object>
+</body>
+</html>

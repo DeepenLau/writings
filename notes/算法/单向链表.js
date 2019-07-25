@@ -4,7 +4,7 @@ function LinkedList() {
     this.next = null
   }
 
-  var lenth = 0
+  var length = 0
   var head = null
 
   // 追加
